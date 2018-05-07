@@ -13,15 +13,12 @@ public:
 		c.notify_one();
 	}
 
-	// Забираэмо верхній елемент
+	// Забираємо верхній елемент
 	// Якщо черга пуста то чекаємо, поки додадуть елемент
 	T dequeue(void)
 	{
 		std::unique_lock<std::mutex> lock(m);
-		while (q.empty())
-		{
-			c.wait(lock);
-		}
+		c.wait_for(lock, timeout, [this] { return !q.empty(); }))
 		T val = q.front();
 		q.pop();
 		return val;
